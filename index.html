@@ -130,7 +130,7 @@
   <script>
     let multas = [];
 
-fetch('https://docs.google.com/spreadsheets/d/e/2PACX-1vR1MbRNwg_amqEoZBUn_KT1kuflI2HjY4juQOnLe4X48Hh7LiFUnXmChwO1DEzS0HQ084ZkNcmFudf4/pub?gid=1772595596&single=true&output=csv')
+fetch('MULTAS PMT.csv')
   .then(res => res.text())
   .then(data => {
     const rows = data.trim().split('\n').slice(1);
