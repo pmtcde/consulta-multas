@@ -37,13 +37,13 @@
 
     header h1 {
       font-size: 1.5rem;
-     
     }
 
     main h1 {
       text-align: left;
-      margin-right: 115px;}
-      
+      margin-right: 115px;
+    }
+
     main {
       flex: 1;
       display: flex;
@@ -52,9 +52,7 @@
       align-items: center;
       padding: 40px 20px;
       text-align: center;
-      
     }
-
 
     input {
       padding: 12px 20px;
@@ -113,9 +111,9 @@
 <body>
 
   <header>
-   <img src="logo muni.png">
-   <img src="logo pmt.png">
-    <h1>Policia Municipal CDE </h1>
+    <img src="logo muni.png" alt="Logo Municipalidad">
+    <img src="logo pmt.png" alt="Logo PMT">
+    <h1>Policia Municipal CDE</h1>
   </header>
 
   <main>
@@ -128,40 +126,49 @@
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.2/papaparse.min.js"></script>
-<script>
-  let multas = [];
+  <script>
+    let multas = [];
 
-  Papa.parse('https://docs.google.com/spreadsheets/d/e/2PACX-1vR1MbRNwg_amqEoZBUn_KT1kuflI2HjY4juQOnLe4X48Hh7LiFUnXmChwO1DEzS0HQ084ZkNcmFudf4/pub?output=csv', {
-    download: true,
-    header: true,
-    complete: function(results) {
-      multas = results.data.filter(row => row.MATRICULA); // filtra filas vacías
-      console.log("Datos cargados:", multas);
+    Papa.parse('https://docs.google.com/spreadsheets/d/e/2PACX-1vR1MbRNwg_amqEoZBUn_KT1kuflI2HjY4juQOnLe4X48Hh7LiFUnXmChwO1DEzS0HQ084ZkNcmFudf4/pub?output=csv', {
+      download: true,
+      header: true,
+      complete: function(results) {
+        // Normaliza nombres de columnas a mayúsculas
+        multas = results.data.map(row => {
+          let nuevaFila = {};
+          for (let clave in row) {
+            nuevaFila[clave.trim().toUpperCase()] = row[clave];
+          }
+          return nuevaFila;
+        }).filter(row => row.MATRICULA);
+        console.log("Datos normalizados:", multas);
+      }
+    });
+
+    function buscarMatricula() {
+      const input = document.getElementById('matricula').value.trim().toUpperCase();
+      const resultados = multas.filter(row => row.MATRICULA.toUpperCase() === input);
+
+      const div = document.getElementById('resultado');
+      if (resultados.length > 0) {
+        let html = '<table><tr><th>Fecha</th><th>Vehículo</th><th>Matrícula</th><th>Infracción</th><th>Boleta</th><th>Comprobante</th></tr>';
+        resultados.forEach(r => {
+          html += `<tr>
+            <td>${r.FECHA}</td>
+            <td>${r.VEHICULO}</td>
+            <td>${r.MATRICULA}</td>
+            <td>${r.INFRACCION}</td>
+            <td>${r['BOLETA DE CONTRAVENCION']}</td>
+            <td>${r['COMPROBANTE DE PAGO']}</td>
+          </tr>`;
+        });
+        html += '</table>';
+        div.innerHTML = html;
+      } else {
+        div.innerHTML = "<p>No se encontraron multas para esa matrícula.</p>";
+      }
     }
-  });
-
-  function buscarMatricula() {
-    const input = document.getElementById('matricula').value.trim().toUpperCase();
-    const resultados = multas.filter(row => row.MATRICULA.toUpperCase() === input);
-
-    const div = document.getElementById('resultado');
-    if (resultados.length > 0) {
-      let html = '<table><tr><th>Fecha</th><th>Vehículo</th><th>Infracción</th><th>Comprobante</th></tr>';
-      resultados.forEach(r => {
-        html += `<tr>
-          <td>${r.FECHA}</td>
-          <td>${r.VEHICULO}</td>
-          <td>${r.INFRACCION}</td>
-          <td>${r['COMPROBANTE DE PAGO']}</td>
-        </tr>`;
-      });
-      html += '</table>';
-      div.innerHTML = html;
-    } else {
-      div.innerHTML = "<p>No se encontraron multas para esa matrícula.</p>";
-    }
-  }
-</script>
-  
+  </script>
 </body>
 </html>
+
