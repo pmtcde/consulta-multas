@@ -130,32 +130,44 @@
   <script>
     let multas = [];
 
-    fetch('https://docs.google.com/spreadsheets/d/e/2PACX-1vR1MbRNwg_amqEoZBUn_KT1kuflI2HjY4juQOnLe4X48Hh7LiFUnXmChwO1DEzS0HQ084ZkNcmFudf4/pub?gid=1772595596&single=true&output=csv')
-      .then(res => res.text())
-      .then(data => {
-        const rows = data.trim().split('\\n').slice(1);
-        multas = rows.map(row => {
-          const [MATRICULA, VEHICULO, INFRACCION, FECHA, ] = row.split(',');
-          return { MATRICULA, VEHICULO, INFRACCION, FECHA, };
-        });
-      });
+fetch('https://docs.google.com/spreadsheets/d/e/TU_ENLACE_DE_CSV/pub?output=csv')
+  .then(res => res.text())
+  .then(data => {
+    const rows = data.trim().split('\n').slice(1);
+    multas = rows.map(row => {
+      const cols = row.split(',');
+      return {
+        fecha: cols[0],
+        vehiculo: cols[1],
+        matricula: cols[2].trim().toUpperCase(),
+        infraccion: cols[3],
+        pago: cols[4]
+      };
+    });
+  });
 
-    function buscarMatricula() {
-      const input = document.getElementById("matricula").value.trim().toUpperCase();
-      const resultado = multas.filter(m => m.matricula === input);
+function buscarMatricula() {
+  const input = document.getElementById("matricula").value.trim().toUpperCase();
+  const resultado = multas.filter(m => m.matricula === input);
 
-      const div = document.getElementById("resultado");
-      if (resultado.length > 0) {
-        let html = '<table><tr><th>INFRACCION</th><th>FECHA</th><th>MATRICULA</th></tr>';
-        resultado.forEach(r => {
-          html += `<tr><td>${r.infraccion}</td><td>${r.fecha}</td><td>${r.MATRICULA}</td></tr>`;
-        });
-        html += '</table>';
-        div.innerHTML = html;
-      } else {
-        div.innerHTML = "NO REGISTRA";
-      }
-    }
+  const div = document.getElementById("resultado");
+  if (resultado.length > 0) {
+    let html = '<table><tr><th>Fecha</th><th>Vehículo</th><th>Infracción</th><th>Comprobante</th></tr>';
+    resultado.forEach(r => {
+      html += `<tr>
+        <td>${r.fecha}</td>
+        <td>${r.vehiculo}</td>
+        <td>${r.infraccion}</td>
+        <td>${r.pago}</td>
+      </tr>`;
+    });
+    html += '</table>';
+    div.innerHTML = html;
+  } else {
+    div.innerHTML = "NO REGISTRA";
+  }
+}
+
   </script>
 
 </body>
