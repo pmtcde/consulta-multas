@@ -130,7 +130,7 @@
   <script>
     let multas = [];
 
-fetch('https://docs.google.com/spreadsheets/d/e/TU_ENLACE_DE_CSV/pub?output=csv')
+fetch('https://docs.google.com/spreadsheets/d/e/2PACX-1vR1MbRNwg_amqEoZBUn_KT1kuflI2HjY4juQOnLe4X48Hh7LiFUnXmChwO1DEzS0HQ084ZkNcmFudf4/pub?gid=1772595596&single=true&output=csv')
   .then(res => res.text())
   .then(data => {
     const rows = data.trim().split('\n').slice(1);
@@ -152,13 +152,13 @@ function buscarMatricula() {
 
   const div = document.getElementById("resultado");
   if (resultado.length > 0) {
-    let html = '<table><tr><th>Fecha</th><th>Vehículo</th><th>Infracción</th><th>Comprobante</th></tr>';
+    let html = '<table><tr><th>FECHA</th><th>VEHICULO</th><th>INFRACCION</th><th>PAGO</th></tr>';
     resultado.forEach(r => {
       html += `<tr>
-        <td>${r.fecha}</td>
-        <td>${r.vehiculo}</td>
-        <td>${r.infraccion}</td>
-        <td>${r.pago}</td>
+        <td>${r.FECHA}</td>
+        <td>${r.VEHICULO}</td>
+        <td>${r.INFRACCION}</td>
+        <td>${r.COMPROBANTE DE PAGO}</td>
       </tr>`;
     });
     html += '</table>';
