@@ -100,31 +100,28 @@
 
     #resultado {
       margin-top: 25px;
-      font-size: 16px;
-      font-weight: bold;
       width: 100%;
+      max-width: 600px;
     }
 
-    .tabla-responsive {
-      overflow-x: auto;
-      margin-top: 20px;
-    }
-
-    table {
-      border-collapse: collapse;
-      width: 100%;
-      min-width: 600px;
-    }
-
-    th, td {
+    .card {
+      background-color: white;
       border: 1px solid var(--azul-claro);
-      padding: 10px 12px;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 15px;
       text-align: left;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
 
-    th {
-      background-color: var(--azul-claro);
-      color: white;
+    .card div {
+      margin-bottom: 6px;
+    }
+
+    .card span.label {
+      font-weight: bold;
+      display: inline-block;
+      width: 140px;
     }
 
     @media (min-width: 600px) {
@@ -188,31 +185,22 @@
       const input = document.getElementById('matricula').value.trim().toUpperCase();
       const resultados = multas.filter(row => row.MATRICULA.toUpperCase() === input);
       const div = document.getElementById('resultado');
+      div.innerHTML = '';
 
       if (resultados.length > 0) {
-        let html = `
-          <div class="tabla-responsive">
-            <table>
-              <tr>
-                <th>Fecha</th>
-                <th>Vehículo</th>
-                <th>Matrícula</th>
-                <th>Infracción</th>
-                <th>Boleta</th>
-                <th>Comprobante</th>
-              </tr>`;
         resultados.forEach(r => {
-          html += `<tr>
-              <td>${r.FECHA}</td>
-              <td>${r.VEHICULO}</td>
-              <td>${r.MATRICULA}</td>
-              <td>${r.INFRACCION}</td>
-              <td>${r['BOLETA DE CONTRAVENCION'] || ''}</td>
-              <td>${r['COMPROBANTE DE PAGO'] || ''}</td>
-            </tr>`;
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.innerHTML = `
+            <div><span class="label">Fecha:</span> ${r.FECHA}</div>
+            <div><span class="label">Vehículo:</span> ${r.VEHICULO}</div>
+            <div><span class="label">Matrícula:</span> ${r.MATRICULA}</div>
+            <div><span class="label">Infracción:</span> ${r.INFRACCION}</div>
+            <div><span class="label">Boleta:</span> ${r['BOLETA DE CONTRAVENCION'] || ''}</div>
+            <div><span class="label">Comprobante:</span> ${r['COMPROBANTE DE PAGO'] || ''}</div>
+          `;
+          div.appendChild(card);
         });
-        html += `</table></div>`;
-        div.innerHTML = html;
       } else {
         div.innerHTML = "<p>No se encontraron multas para esa matrícula.</p>";
       }
@@ -220,3 +208,4 @@
   </script>
 </body>
 </html>
+
