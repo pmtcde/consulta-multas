@@ -12,6 +12,10 @@
       --azul-claro: #415a77;
     }
 
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
@@ -25,23 +29,20 @@
     header {
       display: flex;
       align-items: center;
-      padding: 10px 30px;
+      padding: 10px 20px;
       background-color: var(--azul);
       color: var(--blanco);
+      flex-wrap: wrap;
     }
 
     header img {
-      height: 60px;
-      margin-right: 20px;
+      height: 50px;
+      margin-right: 10px;
     }
 
     header h1 {
-      font-size: 1.5rem;
-    }
-
-    main h1 {
-      text-align: left;
-      margin-right: 115px;
+      font-size: 1.2rem;
+      margin: 10px 0;
     }
 
     main {
@@ -50,18 +51,33 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      padding: 40px 20px;
+      padding: 30px 15px;
       text-align: center;
     }
 
-    input {
-      padding: 12px 20px;
-      font-size: 18px;
-      width: 250px;
-      border: 1px solid var(--azul-claro);
+    main h1 {
+      font-size: 1.4rem;
+      margin-bottom: 20px;
+    }
+
+    .input-container {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      max-width: 350px;
+    }
+
+    .input-container input,
+    .input-container button {
+      padding: 12px 15px;
+      font-size: 16px;
+      margin: 5px 0;
       border-radius: 8px;
+    }
+
+    input {
+      border: 1px solid var(--azul-claro);
       transition: all 0.3s ease;
-      margin-right: 10px;
     }
 
     input:focus {
@@ -71,12 +87,9 @@
     }
 
     button {
-      padding: 12px 20px;
       background-color: var(--azul-claro);
       color: white;
-      font-size: 18px;
       border: none;
-      border-radius: 8px;
       cursor: pointer;
       transition: background-color 0.3s ease;
     }
@@ -86,25 +99,52 @@
     }
 
     #resultado {
-      margin-top: 30px;
-      font-size: 20px;
+      margin-top: 25px;
+      font-size: 16px;
       font-weight: bold;
+      width: 100%;
+    }
+
+    .tabla-responsive {
+      overflow-x: auto;
+      margin-top: 20px;
     }
 
     table {
-      margin: 0 auto;
       border-collapse: collapse;
-      margin-top: 20px;
+      width: 100%;
+      min-width: 600px;
     }
 
     th, td {
       border: 1px solid var(--azul-claro);
-      padding: 10px 15px;
+      padding: 10px 12px;
+      text-align: left;
     }
 
     th {
       background-color: var(--azul-claro);
       color: white;
+    }
+
+    @media (min-width: 600px) {
+      header h1 {
+        font-size: 1.5rem;
+      }
+
+      .input-container {
+        flex-direction: row;
+        justify-content: center;
+        gap: 10px;
+      }
+
+      .input-container input {
+        flex: 1;
+      }
+
+      .input-container button {
+        width: auto;
+      }
     }
   </style>
 </head>
@@ -117,8 +157,8 @@
   </header>
 
   <main>
-    <div><h1>Consultar multa</h1></div>
-    <div>
+    <h1>Consultar multa</h1>
+    <div class="input-container">
       <input type="text" id="matricula" placeholder="Ingrese matrícula (Ej: P123ABC)">
       <button onclick="buscarMatricula()">Buscar</button>
     </div>
@@ -133,7 +173,6 @@
       download: true,
       header: true,
       complete: function(results) {
-        // Normaliza nombres de columnas a mayúsculas
         multas = results.data.map(row => {
           let nuevaFila = {};
           for (let clave in row) {
@@ -148,21 +187,31 @@
     function buscarMatricula() {
       const input = document.getElementById('matricula').value.trim().toUpperCase();
       const resultados = multas.filter(row => row.MATRICULA.toUpperCase() === input);
-
       const div = document.getElementById('resultado');
+
       if (resultados.length > 0) {
-        let html = '<table><tr><th>Fecha</th><th>Vehículo</th><th>Matrícula</th><th>Infracción</th><th>Boleta</th><th>Comprobante de pago</th></tr>';
+        let html = `
+          <div class="tabla-responsive">
+            <table>
+              <tr>
+                <th>Fecha</th>
+                <th>Vehículo</th>
+                <th>Matrícula</th>
+                <th>Infracción</th>
+                <th>Boleta</th>
+                <th>Comprobante</th>
+              </tr>`;
         resultados.forEach(r => {
           html += `<tr>
-            <td>${r.FECHA}</td>
-            <td>${r.VEHICULO}</td>
-            <td>${r.MATRICULA}</td>
-            <td>${r.INFRACCION}</td>
-            <td>${r['BOLETA DE CONTRAVENCION']}</td>
-            <td>${r['COMPROBANTE DE PAGO']}</td>
-          </tr>`;
+              <td>${r.FECHA}</td>
+              <td>${r.VEHICULO}</td>
+              <td>${r.MATRICULA}</td>
+              <td>${r.INFRACCION}</td>
+              <td>${r['BOLETA DE CONTRAVENCION'] || ''}</td>
+              <td>${r['COMPROBANTE DE PAGO'] || ''}</td>
+            </tr>`;
         });
-        html += '</table>';
+        html += `</table></div>`;
         div.innerHTML = html;
       } else {
         div.innerHTML = "<p>No se encontraron multas para esa matrícula.</p>";
@@ -171,4 +220,3 @@
   </script>
 </body>
 </html>
-
