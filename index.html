@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Policia Municipal CDE</title>
+  <style>
+    :root {
+      --azul: #0d1b2a;
+      --gris: #e0e1dd;
+      --blanco: #ffffff;
+      --azul-claro: #415a77;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: var(--gris);
+      color: var(--azul);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      padding: 10px 30px;
+      background-color: var(--azul);
+      color: var(--blanco);
+    }
+
+    header img {
+      height: 60px;
+      margin-right: 20px;
+    }
+
+    header h1 {
+      font-size: 1.5rem;
+     
+    }
+
+    main h1 {
+      text-align: left;
+      margin-right: 115px;}
+      
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 20px;
+      text-align: center;
+      
+    }
+
+
+    input {
+      padding: 12px 20px;
+      font-size: 18px;
+      width: 250px;
+      border: 1px solid var(--azul-claro);
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      margin-right: 10px;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: var(--azul);
+      box-shadow: 0 0 8px var(--azul-claro);
+    }
+
+    button {
+      padding: 12px 20px;
+      background-color: var(--azul-claro);
+      color: white;
+      font-size: 18px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: var(--azul);
+    }
+
+    #resultado {
+      margin-top: 30px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    table {
+      margin: 0 auto;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      border: 1px solid var(--azul-claro);
+      padding: 10px 15px;
+    }
+
+    th {
+      background-color: var(--azul-claro);
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+   <img src="img/logo muni.png" alt="logo">
+   <img src="img/logo pmt.png" alt="logo">
+    <h1>Policia Municipal CDE </h1>
+  </header>
+
+  <main>
+    <div><h1>Consultar multa</h1></div>
+    <div>
+      <input type="text" id="matricula" placeholder="Ingrese matrícula (Ej: P123ABC)">
+      <button onclick="buscarMatricula()">Buscar</button>
+    </div>
+    <div id="resultado"></div>
+  </main>
+
+  <script>
+    let multas = [];
+
+    fetch('https://docs.google.com/spreadsheets/d/e/2PACX-1vR1MbRNwg_amqEoZBUn_KT1kuflI2HjY4juQOnLe4X48Hh7LiFUnXmChwO1DEzS0HQ084ZkNcmFudf4/pub?gid=1772595596&single=true&output=csv')
+      .then(res => res.text())
+      .then(data => {
+        const rows = data.trim().split('\\n').slice(1);
+        multas = rows.map(row => {
+          const [MATRICULA, VEHICULO, INFRACCION, FECHA, ] = row.split(',');
+          return { MATRICULA, VEHICULO, INFRACCION, FECHA, };
+        });
+      });
+
+    function buscarMatricula() {
+      const input = document.getElementById("matricula").value.trim().toUpperCase();
+      const resultado = multas.filter(m => m.matricula === input);
+
+      const div = document.getElementById("resultado");
+      if (resultado.length > 0) {
+        let html = '<table><tr><th>INFRACCION</th><th>FECHA</th><th>MATRICULA</th></tr>';
+        resultado.forEach(r => {
+          html += `<tr><td>${r.infraccion}</td><td>${r.fecha}</td><td>${r.MATRICULA}</td></tr>`;
+        });
+        html += '</table>';
+        div.innerHTML = html;
+      } else {
+        div.innerHTML = "NO REGISTRA";
+      }
+    }
+  </script>
+
+</body>
+</html>
