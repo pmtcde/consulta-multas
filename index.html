@@ -197,8 +197,8 @@
             <div><span class="label">Vehículo:</span> ${r.VEHICULO}</div>
             <div><span class="label">Matrícula:</span> ${r.MATRICULA}</div>
             <div><span class="label">Infracción:</span> ${r.INFRACCION}</div>
-            <div><span class="label">Boleta:</span> ${r['BOLETA DE CONTRAVENCION'] || ''}</div>
-            <div><span class="label">Comprobante:</span> ${r['COMPROBANTE DE PAGO'] || ''}</div>
+            <div><span class="label">Boleta N°:</span> ${r['BOLETA DE CONTRAVENCION'] || ''}</div>
+            <div><span class="label">Comprobante de pago:</span> ${r['COMPROBANTE DE PAGO'] || ''}</div>
           `;
           div.appendChild(card);
         });
