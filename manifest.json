@@ -1,0 +1,21 @@
+{
+    "name": "Consulta de Multas PMT",
+    "short_name": "Multas PMT",
+    "start_url": "./index.html",
+    "display": "standalone",
+    "background_color": "#e0e1dd",
+    "theme_color": "#0d1b2a",
+    "icons": [
+      {
+        "src": "logo muni.png",
+        "sizes": "192x192",
+        "type": "image/png"
+      },
+      {
+        "src": "*logo muni.png",
+        "sizes": "512x512",
+        "type": "image/png"
+      }
+    ]
+  }
+  
