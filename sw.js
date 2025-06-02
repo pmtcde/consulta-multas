@@ -5,8 +5,8 @@ self.addEventListener('install', event => {
           './',
           './index.html',
           './manifest.json',
-          './icon-192.png',
-          './icon-512.png',
+          './logo pmt.png',
+          './logo pmt.png',
           'https://cdn.jsdelivr.net/npm/papaparse@5.3.2/papaparse.min.js'
         ]);
       })
