@@ -10,8 +10,6 @@
       --gris: #e0e1dd;
       --blanco: #ffffff;
       --azul-claro: #415a77;
-      --rojo: #c1121f;
-      --verde: #2d6a4f;
     }
 
     * {
@@ -26,21 +24,6 @@
       display: flex;
       flex-direction: column;
       min-height: 100vh;
-    }
-
-    @media (prefers-color-scheme: dark) {
-      body {
-        background-color: #121212;
-        color: #f0f0f0;
-      }
-      .card {
-        background-color: #1e1e1e;
-        color: #f0f0f0;
-      }
-      input, button {
-        background-color: #2a2a2a;
-        color: white;
-      }
     }
 
     header {
@@ -141,20 +124,6 @@
       width: 140px;
     }
 
-    .estado {
-      font-weight: bold;
-      padding: 6px 10px;
-      border-radius: 6px;
-    }
-
-    .pendiente {
-      color: var(--rojo);
-    }
-
-    .pagado {
-      color: var(--verde);
-    }
-
     @media (min-width: 600px) {
       header h1 {
         font-size: 1.5rem;
@@ -208,12 +177,16 @@
           }
           return nuevaFila;
         }).filter(row => row.MATRICULA);
-        console.log("Datos cargados:", multas);
       }
     });
 
+    function limpiarTexto(texto) {
+      return texto.replace(/\s+/g, '').toUpperCase();
+    }
+
     function buscarMatricula() {
-      const input = document.getElementById('matricula').value.trim().toUpperCase();
+      const inputRaw = document.getElementById('matricula').value;
+      const input = limpiarTexto(inputRaw);
       const div = document.getElementById('resultado');
       div.innerHTML = '';
 
@@ -222,12 +195,10 @@
         return;
       }
 
-      const resultados = multas.filter(row => row.MATRICULA.toUpperCase() === input);
+      const resultados = multas.filter(row => limpiarTexto(row.MATRICULA) === input);
 
       if (resultados.length > 0) {
         resultados.forEach(r => {
-          const estado = r['COMPROBANTE DE PAGO'] ? '<span class="estado pagado">✅ Pagado</span>' : '<span class="estado pendiente">❌ Pendiente</span>';
-
           const card = document.createElement('div');
           card.className = 'card';
           card.innerHTML = `
@@ -236,16 +207,15 @@
             <div><span class="label">Matrícula:</span> ${r.MATRICULA}</div>
             <div><span class="label">Infracción:</span> ${r.INFRACCION}</div>
             <div><span class="label">Boleta N°:</span> ${r['BOLETA DE CONTRAVENCION'] || ''}</div>
-            <div><span class="label">Comprobante de pago:</span> ${r['COMPROBANTE DE PAGO'] || 'No registrado'} ${estado}</div>
+            <div><span class="label">Comprobante de pago:</span> ${r['COMPROBANTE DE PAGO'] || 'No registrado'}</div>
           `;
           div.appendChild(card);
         });
       } else {
-        div.innerHTML = "<p>No se encontraron multas para esa matrícula.</p>";
+        div.innerHTML = '<p>No se registran multas para esta matrícula.</p>';
       }
     }
 
-    // Activar búsqueda con Enter
     document.getElementById('matricula').addEventListener('keypress', function(e) {
       if (e.key === 'Enter') buscarMatricula();
     });
