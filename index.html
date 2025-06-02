@@ -4,12 +4,18 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Policia Municipal CDE</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#0d1b2a" />
+
   <style>
     :root {
       --azul: #0d1b2a;
       --gris: #e0e1dd;
       --blanco: #ffffff;
       --azul-claro: #415a77;
+      --verde-whatsapp: #25D366; /* Color de WhatsApp */
+      --gris-oscuro-texto: #333; /* Un gris más oscuro para texto principal si es necesario */
     }
 
     * {
@@ -124,6 +130,47 @@
       width: 140px;
     }
 
+    footer {
+      background-color: var(--azul);
+      color: var(--blanco);
+      text-align: center;
+      padding: 25px 20px; /* Más padding */
+      margin-top: auto; /* Empuja el footer al final de la página */
+      border-top: 3px solid var(--azul-claro); /* Borde superior */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 15px; /* Más espacio entre elementos */
+      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2); /* Sombra hacia arriba */
+    }
+
+    footer span {
+        font-size: 0.95em; /* Tamaño de fuente ligeramente más pequeño para el copyright */
+        opacity: 0.8; /* Ligeramente transparente */
+    }
+
+    footer a {
+      color: var(--blanco);
+      text-decoration: none;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 10px; /* Más espacio entre el ícono y el texto */
+      font-size: 1.1em; /* Texto un poco más grande */
+      transition: color 0.3s ease, transform 0.2s ease; /* Añadida transición para transform */
+    }
+
+    footer a:hover {
+      color: var(--verde-whatsapp); /* Resaltar en color de WhatsApp al pasar el ratón */
+      transform: translateY(-3px); /* Pequeña animación */
+    }
+
+    footer .fab { /* Estilo para el ícono de Font Awesome */
+      font-size: 1.5em; /* Ícono más grande */
+    }
+
+
     @media (min-width: 600px) {
       header h1 {
         font-size: 1.5rem;
@@ -141,6 +188,12 @@
 
       .input-container button {
         width: auto;
+      }
+
+      footer {
+        flex-direction: row; /* En línea en pantallas grandes */
+        justify-content: center;
+        gap: 30px; /* Más espacio entre elementos en desktop */
       }
     }
   </style>
@@ -161,6 +214,13 @@
     </div>
     <div id="resultado"></div>
   </main>
+
+  <footer>
+    <span>© 2024 Policia Municipal CDE. Todos los derechos reservados.</span>
+    <a href="https://wa.me/+595983XXXXXX" target="_blank" aria-label="Contactar por WhatsApp">
+      <i class="fab fa-whatsapp"></i> Contacto WhatsApp
+    </a>
+  </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.2/papaparse.min.js"></script>
   <script>
@@ -202,12 +262,12 @@
           const card = document.createElement('div');
           card.className = 'card';
           card.innerHTML = `
-            <div><span class="label">Fecha:</span> ${r.FECHA}</div>
-            <div><span class="label">Vehículo:</span> ${r.VEHICULO}</div>
-            <div><span class="label">Matrícula:</span> ${r.MATRICULA}</div>
-            <div><span class="label">Infracción:</span> ${r.INFRACCION}</div>
-            <div><span class="label">Boleta N°:</span> ${r['BOLETA DE CONTRAVENCION'] || ''}</div>
-            <div><span class="label">Comprobante de pago:</span> ${r['COMPROBANTE DE PAGO'] || 'No registrado'}</div>
+            <div><span class="label">Fecha:</span> ${r.FECHA || 'N/A'}</div>
+            <div><span class="label">Vehículo:</span> ${r.VEHICULO || 'N/A'}</div>
+            <div><span class="label">Matrícula:</span> ${r.MATRICULA || 'N/A'}</div>
+            <div><span class="label">Infracción:</span> ${r.INFRACCION || 'N/A'}</div>
+            <div><span class="label">Boleta N°:</span> ${r['BOLETA DE CONTRAVENCION'] || 'N/A'}</div>
+            <div><span class="label">Comprobante de pago:</span> ${r['COMPROBANTE DE PAGO'] || 'Pendiente'}</div>
           `;
           div.appendChild(card);
         });
@@ -220,6 +280,14 @@
       if (e.key === 'Enter') buscarMatricula();
     });
   </script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js')
+      .then(reg => console.log('Service Worker registrado:', reg))
+      .catch(err => console.error('Error al registrar Service Worker:', err));
+  }
+</script>
+
 </body>
 </html>
-
