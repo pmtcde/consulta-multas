@@ -1,198 +1,230 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Consulta de Multas - PMT CDE</title>
-
-  <!-- Librerías -->
-  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.2/papaparse.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Policia Municipal CDE</title>
+  <link rel="icon" type="image/x-icon" href="logo pmt.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#0d1b2a" />
 
   <style>
+    :root {
+      --azul: #0d1b2a;
+      --gris: #e0e1dd;
+      --blanco: #ffffff;
+      --azul-claro: #415a77;
+      --verde-whatsapp: #25D366;
+      --gris-oscuro-texto: #333;
+    }
+    * { box-sizing: border-box; }
     body {
-      font-family: Arial, sans-serif;
-      background: #f8f9fa;
-      margin: 20px;
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: var(--gris);
+      color: var(--azul);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
     }
-
-    h1 {
-      text-align: center;
-      color: #333;
+    header {
+      display: flex; align-items: center;
+      padding: 10px 20px;
+      background-color: var(--azul);
+      color: var(--blanco);
+      flex-wrap: wrap;
     }
-
+    header img { height: 50px; margin-right: 10px; }
+    header h1 { font-size: 1.2rem; margin: 10px 0; }
+    main {
+      flex: 1; display: flex; flex-direction: column;
+      justify-content: flex-start; align-items: center;
+      padding: 30px 15px; text-align: center;
+    }
+    main h1 { font-size: 1.4rem; margin-bottom: 20px; }
     .input-container {
-      text-align: center;
-      margin-bottom: 20px;
+      display: flex; flex-direction: column;
+      width: 100%; max-width: 350px;
     }
-
-    input {
-      padding: 10px;
-      width: 250px;
-      margin-right: 10px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
+    .input-container input, .input-container button {
+      padding: 12px 15px; font-size: 16px;
+      margin: 5px 0; border-radius: 8px;
     }
-
+    input { border: 1px solid var(--azul-claro); transition: all 0.3s ease; }
+    input:focus {
+      outline: none; border-color: var(--azul);
+      box-shadow: 0 0 8px var(--azul-claro);
+    }
     button {
-      padding: 10px 15px;
-      background: #007bff;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
+      background-color: var(--azul-claro); color: white;
+      border: none; cursor: pointer; transition: background-color 0.3s ease;
     }
-
-    button:hover {
-      background: #0056b3;
-    }
-
+    button:hover { background-color: var(--azul); }
+    #resultado { margin-top: 25px; width: 100%; max-width: 600px; }
     .card {
-      background: white;
-      padding: 15px;
-      margin: 15px auto;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-      width: 300px;
-      position: relative;
+      background-color: white; border: 1px solid var(--azul-claro);
+      border-radius: 8px; padding: 15px; margin-bottom: 15px;
+      text-align: left; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
-
-    .card img.logo {
-      height: 40px;
-      filter: grayscale(100%);
-      display: block;
-      margin-bottom: 10px;
+    .card div { margin-bottom: 6px; }
+    .card span.label { font-weight: bold; display: inline-block; width: 140px; }
+    .exportar-btn {
+      margin-top: 10px; padding: 10px 15px; font-size: 14px;
+      background-color: var(--azul); border-radius: 6px;
     }
-
-    .qr-container {
-      position: absolute;
-      bottom: 10px;
-      right: 10px;
+    footer {
+      background-color: var(--azul); color: var(--blanco);
+      text-align: center; padding: 25px 20px;
+      margin-top: auto; border-top: 3px solid var(--azul-claro);
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: 15px;
+      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
     }
-
-    .export-btn {
-      margin-top: 10px;
-      background: #28a745;
+    footer span { font-size: 0.95em; opacity: 0.8; }
+    footer a {
+      color: var(--blanco); text-decoration: none; font-weight: bold;
+      display: flex; align-items: center; gap: 10px; font-size: 1.1em;
+      transition: color 0.3s ease, transform 0.2s ease;
     }
-
-    .export-btn:hover {
-      background: #1e7e34;
+    footer a:hover { color: var(--verde-whatsapp); transform: translateY(-3px); }
+    footer .fab { font-size: 1.5em; }
+    @media (min-width: 600px) {
+      header h1 { font-size: 1.5rem; }
+      .input-container { flex-direction: row; justify-content: center; gap: 10px; }
+      .input-container input { flex: 1; }
+      .input-container button { width: auto; }
+      footer { flex-direction: row; justify-content: center; gap: 30px; }
     }
   </style>
 </head>
 <body>
 
-<h1>Consulta de Multas - PMT CDE</h1>
+  <header>
+    <img src="logo muni.png" alt="Logo Municipalidad">
+    <img src="logo pmt.png" alt="Logo PMT">
+    <h1>Policia Municipal CDE</h1>
+  </header>
 
-<div class="input-container">
-  <input type="text" id="matricula" placeholder="Ingrese matrícula">
-  <button onclick="buscarMatricula()">Buscar</button>
-</div>
+  <main>
+    <h1>Consultar multa</h1>
+    <div class="input-container">
+      <input type="text" id="matricula" placeholder="Ingrese matrícula (Ej: PMT123)">
+      <button onclick="buscarMatricula()">Buscar</button>
+    </div>
+    <div id="resultado"></div>
+  </main>
 
-<div id="resultados"></div>
+  <footer>
+    <span>© 2024 Policia Municipal CDE. Todos los derechos reservados.</span>
+    <a href="https://wa.me/+595991183793" target="_blank" aria-label="Contactar por WhatsApp">
+      <i class="fab fa-whatsapp"></i> Contacto WhatsApp
+    </a>
+  </footer>
 
-<script>
-  // 🔸 Buscar matrícula
-  function buscarMatricula() {
-    const matricula = document.getElementById("matricula").value.trim().toUpperCase();
-    if (!matricula) return;
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.2/papaparse.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-    Papa.parse("https://docs.google.com/spreadsheets/d/e/2PACX-1vR1MbRNwg_amqEoZBUn_KT1kuflI2HjY4juQOnLe4X48Hh7LiFUnXmChwO1DEzS0HQ084ZkNcmFudf4/pub?output=csv", {
+  <script>
+    let multas = [];
+
+    Papa.parse('https://docs.google.com/spreadsheets/d/e/2PACX-1vR1MbRNwg_amqEoZBUn_KT1kuflI2HjY4juQOnLe4X48Hh7LiFUnXmChwO1DEzS0HQ084ZkNcmFudf4/pub?output=csv', {
       download: true,
       header: true,
       complete: function(results) {
-        const coincidencias = results.data.filter(r => r.MATRICULA && r.MATRICULA.toUpperCase() === matricula);
-        mostrarResultados(coincidencias);
+        multas = results.data.map(row => {
+          let nuevaFila = {};
+          for (let clave in row) {
+            nuevaFila[clave.trim().toUpperCase()] = row[clave];
+          }
+          return nuevaFila;
+        }).filter(row => row.MATRICULA);
       }
     });
-  }
 
-  // 🔸 Mostrar resultados
-  function mostrarResultados(lista) {
-    const contenedor = document.getElementById("resultados");
-    contenedor.innerHTML = "";
-
-    if (lista.length === 0) {
-      contenedor.innerHTML = "<p>No se encontraron resultados.</p>";
-      return;
+    function limpiarTexto(texto) {
+      return texto.replace(/\s+/g, '').toUpperCase();
     }
 
-    lista.forEach(r => {
-      const card = document.createElement("div");
-      card.className = "card";
+    function buscarMatricula() {
+      const inputRaw = document.getElementById('matricula').value;
+      const input = limpiarTexto(inputRaw);
+      const div = document.getElementById('resultado');
+      div.innerHTML = '';
 
-      // Logo
-      const logo = document.createElement("img");
-      logo.src = "logo.png"; // Reemplazar con tu logo real
-      logo.className = "logo";
-      card.appendChild(logo);
+      if (!input) {
+        alert('Por favor, ingrese una matrícula.');
+        return;
+      }
 
-      // Información de la multa
-      card.innerHTML += `
-        <p><b>Fecha:</b> ${r.FECHA || "N/A"}</p>
-        <p><b>Vehículo:</b> ${r.VEHICULO || "N/A"}</p>
-        <p><b>Matrícula:</b> ${r.MATRICULA || "N/A"}</p>
-        <p><b>Infracción:</b> ${r.INFRACCION || "N/A"}</p>
-        <p><b>Boleta:</b> ${r["BOLETA DE CONTRAVENCION"] || "N/A"}</p>
-        <p><b>Comprobante de pago:</b> ${r["COMPROBANTE DE PAGO"] || "Pendiente"}</p>
-      `;
+      const resultados = multas.filter(row => limpiarTexto(row.MATRICULA) === input);
 
-      // QR
-      const qrDiv = document.createElement("div");
-      qrDiv.className = "qr-container";
-      card.appendChild(qrDiv);
+      if (resultados.length > 0) {
+        resultados.forEach(r => {
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.innerHTML = `
+            <div><span class="label">Fecha:</span> ${r.FECHA || 'N/A'}</div>
+            <div><span class="label">Vehículo:</span> ${r.VEHICULO || 'N/A'}</div>
+            <div><span class="label">Matrícula:</span> ${r.MATRICULA || 'N/A'}</div>
+            <div><span class="label">Infracción:</span> ${r.INFRACCION || 'N/A'}</div>
+            <div><span class="label">Boleta N°:</span> ${r['BOLETA DE CONTRAVENCION'] || 'N/A'}</div>
+            <div><span class="label">Comprobante de pago:</span> ${r['COMPROBANTE DE PAGO'] || 'Pendiente'}</div>
+            <button class="exportar-btn" onclick='exportarPDF(${JSON.stringify(r)})'>Exportar PDF</button>
+          `;
+          div.appendChild(card);
+        });
+      } else {
+        div.innerHTML = '<p>No se registran multas para esta matrícula.</p>';
+      }
+    }
 
-      const qr = new QRious({
-        element: qrDiv,
-        value: "#", // se actualizará al generar PDF
-        size: 80
-      });
-
-      // Botón exportar PDF
-      const btn = document.createElement("button");
-      btn.className = "export-btn";
-      btn.textContent = "Exportar PDF";
-      btn.onclick = () => exportarPDF(card, r, qr);
-      card.appendChild(btn);
-
-      contenedor.appendChild(card);
-    });
-  }
-
-  // 🔸 Exportar PDF usando html2canvas
-  function exportarPDF(card, multa, qr) {
-    html2canvas(card).then(canvas => {
+    function exportarPDF(multa) {
       const { jsPDF } = window.jspdf;
-      const imgData = canvas.toDataURL("image/png");
-
       const doc = new jsPDF({
         orientation: "portrait",
         unit: "mm",
-        format: [148, 210] // A5
+        format: "a5"
       });
 
-      // Insertar la imagen capturada
-      doc.addImage(imgData, "PNG", 10, 10, 128, 180);
+      doc.setFontSize(14);
+      doc.text("Policía Municipal de Tránsito - CDE", 15, 20);
 
-      // Crear Blob del PDF y generar URL para el QR
-      const pdfBlob = doc.output("blob");
-      const pdfURL = URL.createObjectURL(pdfBlob);
+      doc.setFontSize(12);
+      doc.text("Comprobante de Infracción", 15, 30);
 
-      // Actualizar QR para apuntar al PDF
-      qr.value = pdfURL;
+      doc.setLineWidth(0.5);
+      doc.line(15, 35, 140, 35);
 
-      // Guardar PDF
-      doc.save(`multa_${multa.MATRICULA || "N_A"}.pdf`);
+      let y = 45;
+      const salto = 10;
+
+      doc.setFontSize(11);
+      doc.text(`Fecha: ${multa.FECHA || 'N/A'}`, 15, y); y += salto;
+      doc.text(`Vehículo: ${multa.VEHICULO || 'N/A'}`, 15, y); y += salto;
+      doc.text(`Matrícula: ${multa.MATRICULA || 'N/A'}`, 15, y); y += salto;
+      doc.text(`Infracción: ${multa.INFRACCION || 'N/A'}`, 15, y); y += salto;
+      doc.text(`Boleta N°: ${multa['BOLETA DE CONTRAVENCION'] || 'N/A'}`, 15, y); y += salto;
+      doc.text(`Comprobante de pago: ${multa['COMPROBANTE DE PAGO'] || 'Pendiente'}`, 15, y);
+
+      doc.setFontSize(9);
+      doc.text("Documento generado automáticamente - PMT CDE", 15, 140);
+
+      doc.save(`multa_${multa.MATRICULA || 'N_A'}.pdf`);
+    }
+
+    document.getElementById('matricula').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') buscarMatricula();
     });
-  }
+  </script>
 
-  // 🔸 Permitir buscar con Enter
-  document.getElementById("matricula").addEventListener("keypress", function(e){
-    if (e.key === "Enter") buscarMatricula();
-  });
-</script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js')
+        .then(reg => console.log('Service Worker registrado:', reg))
+        .catch(err => console.error('Error al registrar Service Worker:', err));
+    }
+  </script>
 
 </body>
 </html>
