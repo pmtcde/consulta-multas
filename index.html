@@ -15,14 +15,10 @@
       --gris: #e0e1dd;
       --blanco: #ffffff;
       --azul-claro: #415a77;
-      --verde-whatsapp: #25D366; /* Color de WhatsApp */
-      --gris-oscuro-texto: #333; /* Un gris más oscuro para texto principal si es necesario */
+      --verde-whatsapp: #25D366;
+      --gris-oscuro-texto: #333;
     }
-
-    * {
-      box-sizing: border-box;
-    }
-
+    * { box-sizing: border-box; }
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
@@ -32,170 +28,73 @@
       flex-direction: column;
       min-height: 100vh;
     }
-
     header {
-      display: flex;
-      align-items: center;
+      display: flex; align-items: center;
       padding: 10px 20px;
       background-color: var(--azul);
       color: var(--blanco);
       flex-wrap: wrap;
     }
-
-    header img {
-      height: 50px;
-      margin-right: 10px;
-    }
-
-    header h1 {
-      font-size: 1.2rem;
-      margin: 10px 0;
-    }
-
+    header img { height: 50px; margin-right: 10px; }
+    header h1 { font-size: 1.2rem; margin: 10px 0; }
     main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: center;
-      padding: 30px 15px;
-      text-align: center;
+      flex: 1; display: flex; flex-direction: column;
+      justify-content: flex-start; align-items: center;
+      padding: 30px 15px; text-align: center;
     }
-
-    main h1 {
-      font-size: 1.4rem;
-      margin-bottom: 20px;
-    }
-
+    main h1 { font-size: 1.4rem; margin-bottom: 20px; }
     .input-container {
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      max-width: 350px;
+      display: flex; flex-direction: column;
+      width: 100%; max-width: 350px;
     }
-
-    .input-container input,
-    .input-container button {
-      padding: 12px 15px;
-      font-size: 16px;
-      margin: 5px 0;
-      border-radius: 8px;
+    .input-container input, .input-container button {
+      padding: 12px 15px; font-size: 16px;
+      margin: 5px 0; border-radius: 8px;
     }
-
-    input {
-      border: 1px solid var(--azul-claro);
-      transition: all 0.3s ease;
-    }
-
+    input { border: 1px solid var(--azul-claro); transition: all 0.3s ease; }
     input:focus {
-      outline: none;
-      border-color: var(--azul);
+      outline: none; border-color: var(--azul);
       box-shadow: 0 0 8px var(--azul-claro);
     }
-
     button {
-      background-color: var(--azul-claro);
-      color: white;
-      border: none;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
+      background-color: var(--azul-claro); color: white;
+      border: none; cursor: pointer; transition: background-color 0.3s ease;
     }
-
-    button:hover {
-      background-color: var(--azul);
-    }
-
-    #resultado {
-      margin-top: 25px;
-      width: 100%;
-      max-width: 600px;
-    }
-
+    button:hover { background-color: var(--azul); }
+    #resultado { margin-top: 25px; width: 100%; max-width: 600px; }
     .card {
-      background-color: white;
-      border: 1px solid var(--azul-claro);
-      border-radius: 8px;
-      padding: 15px;
-      margin-bottom: 15px;
-      text-align: left;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      background-color: white; border: 1px solid var(--azul-claro);
+      border-radius: 8px; padding: 15px; margin-bottom: 15px;
+      text-align: left; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
-
-    .card div {
-      margin-bottom: 6px;
+    .card div { margin-bottom: 6px; }
+    .card span.label { font-weight: bold; display: inline-block; width: 140px; }
+    .exportar-btn {
+      margin-top: 10px; padding: 10px 15px; font-size: 14px;
+      background-color: var(--azul); border-radius: 6px;
     }
-
-    .card span.label {
-      font-weight: bold;
-      display: inline-block;
-      width: 140px;
-    }
-
     footer {
-      background-color: var(--azul);
-      color: var(--blanco);
-      text-align: center;
-      padding: 25px 20px; /* Más padding */
-      margin-top: auto; /* Empuja el footer al final de la página */
-      border-top: 3px solid var(--azul-claro); /* Borde superior */
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 15px; /* Más espacio entre elementos */
-      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2); /* Sombra hacia arriba */
+      background-color: var(--azul); color: var(--blanco);
+      text-align: center; padding: 25px 20px;
+      margin-top: auto; border-top: 3px solid var(--azul-claro);
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: 15px;
+      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
     }
-
-    footer span {
-        font-size: 0.95em; /* Tamaño de fuente ligeramente más pequeño para el copyright */
-        opacity: 0.8; /* Ligeramente transparente */
-    }
-
+    footer span { font-size: 0.95em; opacity: 0.8; }
     footer a {
-      color: var(--blanco);
-      text-decoration: none;
-      font-weight: bold;
-      display: flex;
-      align-items: center;
-      gap: 10px; /* Más espacio entre el ícono y el texto */
-      font-size: 1.1em; /* Texto un poco más grande */
-      transition: color 0.3s ease, transform 0.2s ease; /* Añadida transición para transform */
+      color: var(--blanco); text-decoration: none; font-weight: bold;
+      display: flex; align-items: center; gap: 10px; font-size: 1.1em;
+      transition: color 0.3s ease, transform 0.2s ease;
     }
-
-    footer a:hover {
-      color: var(--verde-whatsapp); /* Resaltar en color de WhatsApp al pasar el ratón */
-      transform: translateY(-3px); /* Pequeña animación */
-    }
-
-    footer .fab { /* Estilo para el ícono de Font Awesome */
-      font-size: 1.5em; /* Ícono más grande */
-    }
-
-
+    footer a:hover { color: var(--verde-whatsapp); transform: translateY(-3px); }
+    footer .fab { font-size: 1.5em; }
     @media (min-width: 600px) {
-      header h1 {
-        font-size: 1.5rem;
-      }
-
-      .input-container {
-        flex-direction: row;
-        justify-content: center;
-        gap: 10px;
-      }
-
-      .input-container input {
-        flex: 1;
-      }
-
-      .input-container button {
-        width: auto;
-      }
-
-      footer {
-        flex-direction: row; /* En línea en pantallas grandes */
-        justify-content: center;
-        gap: 30px; /* Más espacio entre elementos en desktop */
-      }
+      header h1 { font-size: 1.5rem; }
+      .input-container { flex-direction: row; justify-content: center; gap: 10px; }
+      .input-container input { flex: 1; }
+      .input-container button { width: auto; }
+      footer { flex-direction: row; justify-content: center; gap: 30px; }
     }
   </style>
 </head>
@@ -224,6 +123,8 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.2/papaparse.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
   <script>
     let multas = [];
 
@@ -269,6 +170,7 @@
             <div><span class="label">Infracción:</span> ${r.INFRACCION || 'N/A'}</div>
             <div><span class="label">Boleta N°:</span> ${r['BOLETA DE CONTRAVENCION'] || 'N/A'}</div>
             <div><span class="label">Comprobante de pago:</span> ${r['COMPROBANTE DE PAGO'] || 'Pendiente'}</div>
+            <button class="exportar-btn" onclick='exportarPDF(${JSON.stringify(r)})'>Exportar PDF</button>
           `;
           div.appendChild(card);
         });
@@ -277,18 +179,52 @@
       }
     }
 
+    function exportarPDF(multa) {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({
+        orientation: "portrait",
+        unit: "mm",
+        format: "a5"
+      });
+
+      doc.setFontSize(14);
+      doc.text("Policía Municipal de Tránsito - CDE", 15, 20);
+
+      doc.setFontSize(12);
+      doc.text("Comprobante de Infracción", 15, 30);
+
+      doc.setLineWidth(0.5);
+      doc.line(15, 35, 140, 35);
+
+      let y = 45;
+      const salto = 10;
+
+      doc.setFontSize(11);
+      doc.text(`Fecha: ${multa.FECHA || 'N/A'}`, 15, y); y += salto;
+      doc.text(`Vehículo: ${multa.VEHICULO || 'N/A'}`, 15, y); y += salto;
+      doc.text(`Matrícula: ${multa.MATRICULA || 'N/A'}`, 15, y); y += salto;
+      doc.text(`Infracción: ${multa.INFRACCION || 'N/A'}`, 15, y); y += salto;
+      doc.text(`Boleta N°: ${multa['BOLETA DE CONTRAVENCION'] || 'N/A'}`, 15, y); y += salto;
+      doc.text(`Comprobante de pago: ${multa['COMPROBANTE DE PAGO'] || 'Pendiente'}`, 15, y);
+
+      doc.setFontSize(9);
+      doc.text("Documento generado automáticamente - PMT CDE", 15, 140);
+
+      doc.save(`multa_${multa.MATRICULA || 'N_A'}.pdf`);
+    }
+
     document.getElementById('matricula').addEventListener('keypress', function(e) {
       if (e.key === 'Enter') buscarMatricula();
     });
   </script>
 
-<script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js')
-      .then(reg => console.log('Service Worker registrado:', reg))
-      .catch(err => console.error('Error al registrar Service Worker:', err));
-  }
-</script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js')
+        .then(reg => console.log('Service Worker registrado:', reg))
+        .catch(err => console.error('Error al registrar Service Worker:', err));
+    }
+  </script>
 
 </body>
 </html>
