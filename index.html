@@ -3,13 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Policía Municipal CDE</title>
-
+  <title>Policia Municipal CDE</title>
   <link rel="icon" type="image/x-icon" href="logo pmt.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#0d1b2a" />
-
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
   <style>
     :root {
@@ -18,275 +16,215 @@
       --blanco: #ffffff;
       --azul-claro: #415a77;
       --verde-whatsapp: #25D366;
+      --gris-oscuro-texto: #333;
     }
-
     * { box-sizing: border-box; }
-
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
       background-color: var(--gris);
       color: var(--azul);
-      min-height: 100vh;
-    }
-
-    /* LOGIN */
-    #login-container {
-      min-height: 100vh;
       display: flex;
-      align-items: center;
-      justify-content: center;
-      background: var(--gris);
+      flex-direction: column;
+      min-height: 100vh;
     }
-
-    .login-box {
-      background: white;
-      padding: 30px;
-      border-radius: 10px;
-      width: 100%;
-      max-width: 360px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-      text-align: center;
-    }
-
-    .login-box h2 {
-      margin-bottom: 20px;
-    }
-
-    .login-box input {
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 10px;
-      border-radius: 6px;
-      border: 1px solid var(--azul-claro);
-      font-size: 16px;
-    }
-
-    .login-box button {
-      width: 100%;
-      padding: 12px;
-      background: var(--azul-claro);
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-    .login-error {
-      color: red;
-      margin-top: 10px;
-      display: none;
-    }
-
-    /* APP */
-    #app { display: none; }
-
     header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
+      display: flex; align-items: center;
       padding: 10px 20px;
-      background: var(--azul);
-      color: white;
+      background-color: var(--azul);
+      color: var(--blanco);
+      flex-wrap: wrap;
     }
-
-    header img { height: 50px; }
-
-    header h1 {
-      font-size: 1.3rem;
-    }
-
-    header button {
-      margin-left: auto;
-      padding: 8px 12px;
-      background: #c1121f;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
+    header img { height: 50px; margin-right: 10px; }
+    header h1 { font-size: 1.2rem; margin: 10px 0; }
     main {
-      padding: 30px 15px;
-      text-align: center;
+      flex: 1; display: flex; flex-direction: column;
+      justify-content: flex-start; align-items: center;
+      padding: 30px 15px; text-align: center;
     }
-
+    main h1 { font-size: 1.4rem; margin-bottom: 20px; }
     .input-container {
-      display: flex;
-      gap: 10px;
-      max-width: 400px;
-      margin: auto;
+      display: flex; flex-direction: column;
+      width: 100%; max-width: 350px;
     }
-
-    input, button {
-      padding: 12px;
-      font-size: 16px;
-      border-radius: 6px;
+    .input-container input, .input-container button {
+      padding: 12px 15px; font-size: 16px;
+      margin: 5px 0; border-radius: 8px;
     }
-
-    input { flex: 1; border: 1px solid var(--azul-claro); }
-
+    input { border: 1px solid var(--azul-claro); transition: all 0.3s ease; }
+    input:focus {
+      outline: none; border-color: var(--azul);
+      box-shadow: 0 0 8px var(--azul-claro);
+    }
     button {
-      background: var(--azul-claro);
-      color: white;
-      border: none;
-      cursor: pointer;
+      background-color: var(--azul-claro); color: white;
+      border: none; cursor: pointer; transition: background-color 0.3s ease;
     }
-
-    #resultado {
-      margin-top: 25px;
-      max-width: 600px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
+    button:hover { background-color: var(--azul); }
+    #resultado { margin-top: 25px; width: 100%; max-width: 600px; }
     .card {
-      background: white;
-      padding: 15px;
-      border-radius: 8px;
-      margin-bottom: 15px;
-      text-align: left;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      background-color: white; border: 1px solid var(--azul-claro);
+      border-radius: 8px; padding: 15px; margin-bottom: 15px;
+      text-align: left; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
-
-    .label {
-      font-weight: bold;
-      display: inline-block;
-      width: 140px;
-    }
-
+    .card div { margin-bottom: 6px; }
+    .card span.label { font-weight: bold; display: inline-block; width: 140px; }
     .exportar-btn {
-      margin-top: 10px;
-      background: var(--azul);
-      padding: 10px;
-      border-radius: 6px;
-      color: white;
+      margin-top: 10px; padding: 10px 15px; font-size: 14px;
+      background-color: var(--azul); border-radius: 6px;
     }
-
     footer {
-      background: var(--azul);
-      color: white;
-      text-align: center;
-      padding: 20px;
-      margin-top: 40px;
+      background-color: var(--azul); color: var(--blanco);
+      text-align: center; padding: 25px 20px;
+      margin-top: auto; border-top: 3px solid var(--azul-claro);
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: 15px;
+      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+    }
+    footer span { font-size: 0.95em; opacity: 0.8; }
+    footer a {
+      color: var(--blanco); text-decoration: none; font-weight: bold;
+      display: flex; align-items: center; gap: 10px; font-size: 1.1em;
+      transition: color 0.3s ease, transform 0.2s ease;
+    }
+    footer a:hover { color: var(--verde-whatsapp); transform: translateY(-3px); }
+    footer .fab { font-size: 1.5em; }
+    @media (min-width: 600px) {
+      header h1 { font-size: 1.5rem; }
+      .input-container { flex-direction: row; justify-content: center; gap: 10px; }
+      .input-container input { flex: 1; }
+      .input-container button { width: auto; }
+      footer { flex-direction: row; justify-content: center; gap: 30px; }
     }
   </style>
 </head>
-
 <body>
 
-<!-- LOGIN -->
-<div id="login-container">
-  <div class="login-box">
-    <h2>Acceso Funcionarios PMT</h2>
-    <input type="text" id="usuario" placeholder="Usuario">
-    <input type="password" id="password" placeholder="Contraseña">
-    <button onclick="login()">Ingresar</button>
-    <div id="login-error" class="login-error">Usuario o contraseña incorrectos</div>
-  </div>
-</div>
+  <header>
+    <img src="logo muni.png" alt="Logo Municipalidad">
+    <img src="logo pmt.png" alt="Logo PMT">
+    <h1>Policia Municipal CDE</h1>
+  </header>
 
-<!-- APP -->
-<div id="app">
+  <main>
+    <h1>Consultar multa</h1>
+    <div class="input-container">
+      <input type="text" id="matricula" placeholder="Ingrese matrícula (Ej: PMT123)">
+      <button onclick="buscarMatricula()">Buscar</button>
+    </div>
+    <div id="resultado"></div>
+  </main>
 
-<header>
-  <img src="logo muni.png">
-  <img src="logo pmt.png">
-  <h1>Policía Municipal de Tránsito - CDE</h1>
-  <button onclick="logout()">Cerrar sesión</button>
-</header>
+  <footer>
+    <span>© 2024 Policia Municipal CDE. Todos los derechos reservados.</span>
+    <a href="https://wa.me/+595991183793" target="_blank" aria-label="Contactar por WhatsApp">
+      <i class="fab fa-whatsapp"></i> Contacto WhatsApp
+    </a>
+  </footer>
 
-<main>
-  <h2>Consultar multa</h2>
-  <div class="input-container">
-    <input type="text" id="matricula" placeholder="Ingrese matrícula">
-    <button onclick="buscarMatricula()">Buscar</button>
-  </div>
-  <div id="resultado"></div>
-</main>
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.2/papaparse.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-<footer>
-  © 2024 Policía Municipal CDE
-</footer>
+  <script>
+    let multas = [];
 
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.2/papaparse.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
-<script>
-  /* LOGIN */
-  const USER = "pmtcde";
-  const PASS = "pmtcde";
-
-  function login() {
-    const u = usuario.value.trim();
-    const p = password.value.trim();
-
-    if (u === USER && p === PASS) {
-      sessionStorage.setItem("logueado", "true");
-      mostrarApp();
-    } else {
-      document.getElementById("login-error").style.display = "block";
-    }
-  }
-
-  function mostrarApp() {
-    document.getElementById("login-container").style.display = "none";
-    document.getElementById("app").style.display = "block";
-  }
-
-  function logout() {
-    sessionStorage.removeItem("logueado");
-    location.reload();
-  }
-
-  if (sessionStorage.getItem("logueado") === "true") {
-    window.onload = mostrarApp;
-  }
-
-  /* MULTAS */
-  let multas = [];
-
-  Papa.parse(
-    "https://docs.google.com/spreadsheets/d/e/2PACX-1vR1MbRNwg_amqEoZBUn_KT1kuflI2HjY4juQOnLe4X48Hh7LiFUnXmChwO1DEzS0HQ084ZkNcmFudf4/pub?output=csv",
-    {
+    Papa.parse('https://docs.google.com/spreadsheets/d/e/2PACX-1vR1MbRNwg_amqEoZBUn_KT1kuflI2HjY4juQOnLe4X48Hh7LiFUnXmChwO1DEzS0HQ084ZkNcmFudf4/pub?output=csv', {
       download: true,
       header: true,
-      complete: r => {
-        multas = r.data.filter(x => x.MATRICULA);
+      complete: function(results) {
+        multas = results.data.map(row => {
+          let nuevaFila = {};
+          for (let clave in row) {
+            nuevaFila[clave.trim().toUpperCase()] = row[clave];
+          }
+          return nuevaFila;
+        }).filter(row => row.MATRICULA);
+      }
+    });
+
+    function limpiarTexto(texto) {
+      return texto.replace(/\s+/g, '').toUpperCase();
+    }
+
+    function buscarMatricula() {
+      const inputRaw = document.getElementById('matricula').value;
+      const input = limpiarTexto(inputRaw);
+      const div = document.getElementById('resultado');
+      div.innerHTML = '';
+
+      if (!input) {
+        alert('Por favor, ingrese una matrícula.');
+        return;
+      }
+
+      const resultados = multas.filter(row => limpiarTexto(row.MATRICULA) === input);
+
+      if (resultados.length > 0) {
+        resultados.forEach(r => {
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.innerHTML = `
+            <div><span class="label">Fecha:</span> ${r.FECHA || 'N/A'}</div>
+            <div><span class="label">Vehículo:</span> ${r.VEHICULO || 'N/A'}</div>
+            <div><span class="label">Matrícula:</span> ${r.MATRICULA || 'N/A'}</div>
+            <div><span class="label">Infracción:</span> ${r.INFRACCION || 'N/A'}</div>
+            <div><span class="label">Boleta N°:</span> ${r['BOLETA DE CONTRAVENCION'] || 'N/A'}</div>
+            <div><span class="label">Comprobante de pago:</span> ${r['COMPROBANTE DE PAGO'] || 'Pendiente'}</div>
+            <button class="exportar-btn" onclick='exportarPDF(${JSON.stringify(r)})'>Exportar PDF</button>
+          `;
+          div.appendChild(card);
+        });
+      } else {
+        div.innerHTML = '<p>No se registran multas para esta matrícula.</p>';
       }
     }
-  );
 
-  function limpiar(t) {
-    return t.replace(/\s+/g,"").toUpperCase();
-  }
+    function exportarPDF(multa) {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({
+        orientation: "portrait",
+        unit: "mm",
+        format: "a5"
+      });
 
-  function buscarMatricula() {
-    const m = limpiar(matricula.value);
-    resultado.innerHTML = "";
+      doc.setFontSize(14);
+      doc.text("Policía Municipal de Tránsito - CDE", 15, 20);
 
-    const res = multas.filter(x => limpiar(x.MATRICULA) === m);
+      doc.setFontSize(12);
+      doc.text("Comprobante de Infracción", 15, 30);
 
-    if (!res.length) {
-      resultado.innerHTML = "<p>No se registran multas.</p>";
-      return;
+      doc.setLineWidth(0.5);
+      doc.line(15, 35, 140, 35);
+
+      let y = 45;
+      const salto = 10;
+
+      doc.setFontSize(11);
+      doc.text(`Fecha: ${multa.FECHA || 'N/A'}`, 15, y); y += salto;
+      doc.text(`Vehículo: ${multa.VEHICULO || 'N/A'}`, 15, y); y += salto;
+      doc.text(`Matrícula: ${multa.MATRICULA || 'N/A'}`, 15, y); y += salto;
+      doc.text(`Infracción: ${multa.INFRACCION || 'N/A'}`, 15, y); y += salto;
+      doc.text(`Boleta N°: ${multa['BOLETA DE CONTRAVENCION'] || 'N/A'}`, 15, y); y += salto;
+      doc.text(`Comprobante de pago: ${multa['COMPROBANTE DE PAGO'] || 'Pendiente'}`, 15, y);
+
+      doc.setFontSize(9);
+      doc.text("Documento generado automáticamente - PMT CDE", 15, 140);
+
+      doc.save(`multa_${multa.MATRICULA || 'N_A'}.pdf`);
     }
 
-    res.forEach(r => {
-      resultado.innerHTML += `
-        <div class="card">
-          <div><span class="label">Fecha:</span> ${r.FECHA || "N/A"}</div>
-          <div><span class="label">Vehículo:</span> ${r.VEHICULO || "N/A"}</div>
-          <div><span class="label">Matrícula:</span> ${r.MATRICULA}</div>
-          <div><span class="label">Infracción:</span> ${r.INFRACCION}</div>
-          <div><span class="label">Boleta N°:</span> ${r["BOLETA DE CONTRAVENCION"] || "N/A"}</div>
-        </div>
-      `;
+    document.getElementById('matricula').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') buscarMatricula();
     });
-  }
-</script>
+  </script>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js')
+        .then(reg => console.log('Service Worker registrado:', reg))
+        .catch(err => console.error('Error al registrar Service Worker:', err));
+    }
+  </script>
 
 </body>
 </html>
