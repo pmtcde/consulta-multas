@@ -98,6 +98,22 @@
     }
   </style>
 </head>
+  
+<script>
+  if (sessionStorage.getItem("logueado") !== "true") {
+    window.location.href = "login.html";
+  }
+</script>
+
+  <button onclick="logout()">Cerrar sesión</button>
+
+<script>
+  function logout() {
+    sessionStorage.removeItem("logueado");
+    window.location.href = "login.html";
+  }
+</script>
+
 <body>
 
   <header>
@@ -228,5 +244,6 @@
 
 </body>
 </html>
+
 
 
