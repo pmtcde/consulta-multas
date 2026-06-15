@@ -171,16 +171,6 @@ function transformarDrive(url) {
     function limpiarTexto(texto) {
       return texto.replace(/\s+/g, '').toUpperCase();
     }
-function transformarDrive(url) {
-  if (url.includes("drive.google.com")) {
-    const match = url.match(/[-\w]{25,}/);
-    if (match) {
-      // Enlace directo al archivo
-      return `https://drive.google.com/uc?export=view&id=${match[0]}`;
-    }
-  }
-  return url;
-}
 
     
     function buscarMatricula() {
@@ -207,7 +197,7 @@ function transformarDrive(url) {
       <div><span class="label">InfracciÃ³n:</span> ${r.INFRACCION || 'N/A'}</div>
       <div><span class="label">Boleta NÂ°:</span> ${r['BOLETA DE CONTRAVENCION'] || 'N/A'}</div>
       <div><span class="label">Comprobante de pago:</span> ${r['COMPROBANTE DE PAGO'] || 'Pendiente'}</div>
-      <div><strong>Evidencia:</strong></div>  ${r.EVIDENCIA ? `<img src="${transformarDrive(r.EVIDENCIA)}" alt="Evidencia" style="max-width:100%; border-radius:8px; margin-top:10px;">` : '<p>No hay evidencia disponible.</p>'}
+      <div><span class="label">Evidencia:</span> ${r.EVIDENCIA  `<img src="${transformarDrive(r.EVIDENCIA)}" alt="Evidencia" style="max-width:100%; border-radius:8px; margin-top:10px;">` : '<p>No hay evidencia disponible.</p>'}
 
       <button class="exportar-btn" onclick='exportarPDF(${JSON.stringify(r)})'>Exportar PDF</button>
     `;
