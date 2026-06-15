@@ -161,7 +161,18 @@
     function limpiarTexto(texto) {
       return texto.replace(/\s+/g, '').toUpperCase();
     }
+function transformarDrive(url) {
+  if (url.includes("drive.google.com")) {
+    const match = url.match(/[-\w]{25,}/);
+    if (match) {
+      // Enlace directo al archivo
+      return `https://drive.google.com/uc?export=view&id=${match[0]}`;
+    }
+  }
+  return url;
+}
 
+    
     function buscarMatricula() {
       const inputRaw = document.getElementById('matricula').value;
       const input = limpiarTexto(inputRaw);
