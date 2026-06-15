@@ -157,22 +157,11 @@
         }).filter(row => row.MATRICULA);
       }
     });
-    
-function transformarDrive(url) {
-  if (url.includes("drive.google.com")) {
-    const match = url.match(/[-\w]{25,}/);
-    if (match) {
-      return `https://drive.google.com/uc?export=view&id=${match[0]}`;
-    }
-  }
-  return url;
-}
 
     function limpiarTexto(texto) {
       return texto.replace(/\s+/g, '').toUpperCase();
     }
 
-    
     function buscarMatricula() {
       const inputRaw = document.getElementById('matricula').value;
       const input = limpiarTexto(inputRaw);
@@ -187,24 +176,21 @@ function transformarDrive(url) {
       const resultados = multas.filter(row => limpiarTexto(row.MATRICULA) === input);
 
       if (resultados.length > 0) {
-  resultados.forEach(r => {
-    const card = document.createElement('div');
-    card.className = 'card';
-    card.innerHTML = `
-      <div><span class="label">Fecha:</span> ${r.FECHA || 'N/A'}</div>
-      <div><span class="label">VehÃ­culo:</span> ${r.VEHICULO || 'N/A'}</div>
-      <div><span class="label">MatrÃ­cula:</span> ${r.MATRICULA || 'N/A'}</div>
-      <div><span class="label">InfracciÃ³n:</span> ${r.INFRACCION || 'N/A'}</div>
-      <div><span class="label">Boleta NÂ°:</span> ${r['BOLETA DE CONTRAVENCION'] || 'N/A'}</div>
-      <div><span class="label">Comprobante de pago:</span> ${r['COMPROBANTE DE PAGO'] || 'Pendiente'}</div>
-      <div><span class="label">Evidencia:</span> ${r.EVIDENCIA  `<img src="${transformarDrive(r.EVIDENCIA)}" alt="Evidencia" style="max-width:100%; border-radius:8px; margin-top:10px;">` : '<p>No hay evidencia disponible.</p>'}
-
-      <button class="exportar-btn" onclick='exportarPDF(${JSON.stringify(r)})'>Exportar PDF</button>
-    `;
-    div.appendChild(card);
-  });
-}
-else {
+        resultados.forEach(r => {
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.innerHTML = `
+            <div><span class="label">Fecha:</span> ${r.FECHA || 'N/A'}</div>
+            <div><span class="label">VehÃ­culo:</span> ${r.VEHICULO || 'N/A'}</div>
+            <div><span class="label">MatrÃ­cula:</span> ${r.MATRICULA || 'N/A'}</div>
+            <div><span class="label">InfracciÃ³n:</span> ${r.INFRACCION || 'N/A'}</div>
+            <div><span class="label">Boleta NÂ°:</span> ${r['BOLETA DE CONTRAVENCION'] || 'N/A'}</div>
+            <div><span class="label">Comprobante de pago:</span> ${r['COMPROBANTE DE PAGO'] || 'Pendiente'}</div>
+            <button class="exportar-btn" onclick='exportarPDF(${JSON.stringify(r)})'>Exportar PDF</button>
+          `;
+          div.appendChild(card);
+        });
+      } else {
         div.innerHTML = '<p>No se registran multas para esta matrÃ­cula.</p>';
       }
     }
@@ -258,9 +244,3 @@ else {
 
 </body>
 </html>
-
-
-
-
-
-
