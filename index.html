@@ -105,7 +105,7 @@
   }
 </script>
 
-  <button onclick="logout()">Cerrar sesión</button>
+  <button onclick="logout()">Cerrar sesiÃ³n</button>
 
 <script>
   function logout() {
@@ -125,14 +125,14 @@
   <main>
     <h1>Consultar multa</h1>
     <div class="input-container">
-      <input type="text" id="matricula" placeholder="Ingrese matrícula (Ej: PMT123)">
+      <input type="text" id="matricula" placeholder="Ingrese matrÃ­cula (Ej: PMT123)">
       <button onclick="buscarMatricula()">Buscar</button>
     </div>
     <div id="resultado"></div>
   </main>
 
   <footer>
-    <span>© 2026 Policia Municipal CDE. Todos los derechos reservados.</span>
+    <span>Â© 2026 Policia Municipal CDE. Todos los derechos reservados.</span>
     <a href="https://wa.me/+595991183793" target="_blank" aria-label="Contactar por WhatsApp">
       <i class="fab fa-whatsapp"></i> Contacto WhatsApp
     </a>
@@ -169,29 +169,32 @@
       div.innerHTML = '';
 
       if (!input) {
-        alert('Por favor, ingrese una matrícula.');
+        alert('Por favor, ingrese una matrÃ­cula.');
         return;
       }
 
       const resultados = multas.filter(row => limpiarTexto(row.MATRICULA) === input);
 
       if (resultados.length > 0) {
-        resultados.forEach(r => {
-          const card = document.createElement('div');
-          card.className = 'card';
-          card.innerHTML = `
-            <div><span class="label">Fecha:</span> ${r.FECHA || 'N/A'}</div>
-            <div><span class="label">Vehículo:</span> ${r.VEHICULO || 'N/A'}</div>
-            <div><span class="label">Matrícula:</span> ${r.MATRICULA || 'N/A'}</div>
-            <div><span class="label">Infracción:</span> ${r.INFRACCION || 'N/A'}</div>
-            <div><span class="label">Boleta N°:</span> ${r['BOLETA DE CONTRAVENCION'] || 'N/A'}</div>
-            <div><span class="label">Comprobante de pago:</span> ${r['COMPROBANTE DE PAGO'] || 'Pendiente'}</div>
-            <button class="exportar-btn" onclick='exportarPDF(${JSON.stringify(r)})'>Exportar PDF</button>
-          `;
-          div.appendChild(card);
-        });
-      } else {
-        div.innerHTML = '<p>No se registran multas para esta matrícula.</p>';
+  resultados.forEach(r => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <div><span class="label">Fecha:</span> ${r.FECHA || 'N/A'}</div>
+      <div><span class="label">VehÃ­culo:</span> ${r.VEHICULO || 'N/A'}</div>
+      <div><span class="label">MatrÃ­cula:</span> ${r.MATRICULA || 'N/A'}</div>
+      <div><span class="label">InfracciÃ³n:</span> ${r.INFRACCION || 'N/A'}</div>
+      <div><span class="label">Boleta NÂ°:</span> ${r['BOLETA DE CONTRAVENCION'] || 'N/A'}</div>
+      <div><span class="label">Comprobante de pago:</span> ${r['COMPROBANTE DE PAGO'] || 'Pendiente'}</div>
+      <div><span class="label">Evidencia:</span></div>
+      ${r.EVIDENCIA ? `<img src="${r.EVIDENCIA}" alt="Evidencia" style="max-width:100%; border-radius:8px; margin-top:10px;">` : '<p>No hay evidencia disponible.</p>'}
+      <button class="exportar-btn" onclick='exportarPDF(${JSON.stringify(r)})'>Exportar PDF</button>
+    `;
+    div.appendChild(card);
+  });
+}
+else {
+        div.innerHTML = '<p>No se registran multas para esta matrÃ­cula.</p>';
       }
     }
 
@@ -204,10 +207,10 @@
       });
 
       doc.setFontSize(14);
-      doc.text("Policía Municipal de Tránsito - CDE", 15, 20);
+      doc.text("PolicÃ­a Municipal de TrÃ¡nsito - CDE", 15, 20);
 
       doc.setFontSize(12);
-      doc.text("Comprobante de Infracción", 15, 30);
+      doc.text("Comprobante de InfracciÃ³n", 15, 30);
 
       doc.setLineWidth(0.5);
       doc.line(15, 35, 140, 35);
@@ -217,14 +220,14 @@
 
       doc.setFontSize(11);
       doc.text(`Fecha: ${multa.FECHA || 'N/A'}`, 15, y); y += salto;
-      doc.text(`Vehículo: ${multa.VEHICULO || 'N/A'}`, 15, y); y += salto;
-      doc.text(`Matrícula: ${multa.MATRICULA || 'N/A'}`, 15, y); y += salto;
-      doc.text(`Infracción: ${multa.INFRACCION || 'N/A'}`, 15, y); y += salto;
-      doc.text(`Boleta N°: ${multa['BOLETA DE CONTRAVENCION'] || 'N/A'}`, 15, y); y += salto;
+      doc.text(`VehÃ­culo: ${multa.VEHICULO || 'N/A'}`, 15, y); y += salto;
+      doc.text(`MatrÃ­cula: ${multa.MATRICULA || 'N/A'}`, 15, y); y += salto;
+      doc.text(`InfracciÃ³n: ${multa.INFRACCION || 'N/A'}`, 15, y); y += salto;
+      doc.text(`Boleta NÂ°: ${multa['BOLETA DE CONTRAVENCION'] || 'N/A'}`, 15, y); y += salto;
       doc.text(`Comprobante de pago: ${multa['COMPROBANTE DE PAGO'] || 'Pendiente'}`, 15, y);
 
       doc.setFontSize(9);
-      doc.text("Documento generado automáticamente - PMT CDE", 15, 140);
+      doc.text("Documento generado automÃ¡ticamente - PMT CDE", 15, 140);
 
       doc.save(`multa_${multa.MATRICULA || 'N_A'}.pdf`);
     }
@@ -244,6 +247,8 @@
 
 </body>
 </html>
+
+
 
 
 
