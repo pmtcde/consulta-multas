@@ -187,7 +187,10 @@
       <div><span class="label">Boleta NÂ°:</span> ${r['BOLETA DE CONTRAVENCION'] || 'N/A'}</div>
       <div><span class="label">Comprobante de pago:</span> ${r['COMPROBANTE DE PAGO'] || 'Pendiente'}</div>
       <div><span class="label">Evidencia:</span></div>
-      ${r.EVIDENCIA ? `<img src="${r.EVIDENCIA}" alt="Evidencia" style="max-width:100%; border-radius:8px; margin-top:50px;">` : '<p>No hay evidencia disponible.</p>'}
+      ${r.EVIDENCIAS 
+  ? `<img src="${transformarDrive(r.EVIDENCIAS)}" alt="Evidencia" style="max-width:100%; border-radius:8px; margin-top:10px;">` 
+  : '<p>No hay evidencia disponible.</p>'}
+
       <button class="exportar-btn" onclick='exportarPDF(${JSON.stringify(r)})'>Exportar PDF</button>
     `;
     div.appendChild(card);
