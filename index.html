@@ -69,7 +69,6 @@
     }
     .card div { margin-bottom: 6px; }
     .card span.label { font-weight: bold; display: inline-block; width: 140px; }
-    .card img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
     .exportar-btn {
       margin-top: 10px; padding: 10px 15px; font-size: 14px;
       background-color: var(--azul); border-radius: 6px;
@@ -106,13 +105,21 @@
   }
 </script>
 
+  <button onclick="logout()">Cerrar sesión</button>
+
+<script>
+  function logout() {
+    sessionStorage.removeItem("logueado");
+    window.location.href = "login.html";
+  }
+</script>
+
 <body>
 
   <header>
     <img src="logo muni.png" alt="Logo Municipalidad">
     <img src="logo pmt.png" alt="Logo PMT">
     <h1>Policia Municipal CDE</h1>
-    <button onclick="logout()">Cerrar sesión</button>
   </header>
 
   <main>
@@ -178,4 +185,66 @@
             <div><span class="label">Matrícula:</span> ${r.MATRICULA || 'N/A'}</div>
             <div><span class="label">Infracción:</span> ${r.INFRACCION || 'N/A'}</div>
             <div><span class="label">Boleta N°:</span> ${r['BOLETA DE CONTRAVENCION'] || 'N/A'}</div>
-            <div><span class="label">Comprobante de pago:</span
+            <div><span class="label">Comprobante de pago:</span> ${r['COMPROBANTE DE PAGO'] || 'Pendiente'}</div>
+            <button class="exportar-btn" onclick='exportarPDF(${JSON.stringify(r)})'>Exportar PDF</button>
+          `;
+          div.appendChild(card);
+        });
+      } else {
+        div.innerHTML = '<p>No se registran multas para esta matrícula.</p>';
+      }
+    }
+
+    function exportarPDF(multa) {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({
+        orientation: "portrait",
+        unit: "mm",
+        format: "a5"
+      });
+
+      doc.setFontSize(14);
+      doc.text("Policía Municipal de Tránsito - CDE", 15, 20);
+
+      doc.setFontSize(12);
+      doc.text("Comprobante de Infracción", 15, 30);
+
+      doc.setLineWidth(0.5);
+      doc.line(15, 35, 140, 35);
+
+      let y = 45;
+      const salto = 10;
+
+      doc.setFontSize(11);
+      doc.text(`Fecha: ${multa.FECHA || 'N/A'}`, 15, y); y += salto;
+      doc.text(`Vehículo: ${multa.VEHICULO || 'N/A'}`, 15, y); y += salto;
+      doc.text(`Matrícula: ${multa.MATRICULA || 'N/A'}`, 15, y); y += salto;
+      doc.text(`Infracción: ${multa.INFRACCION || 'N/A'}`, 15, y); y += salto;
+      doc.text(`Boleta N°: ${multa['BOLETA DE CONTRAVENCION'] || 'N/A'}`, 15, y); y += salto;
+      doc.text(`Comprobante de pago: ${multa['COMPROBANTE DE PAGO'] || 'Pendiente'}`, 15, y);
+
+      doc.setFontSize(9);
+      doc.text("Documento generado automáticamente - PMT CDE", 15, 140);
+
+      doc.save(`multa_${multa.MATRICULA || 'N_A'}.pdf`);
+    }
+
+    document.getElementById('matricula').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') buscarMatricula();
+    });
+  </script>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js')
+        .then(reg => console.log('Service Worker registrado:', reg))
+        .catch(err => console.error('Error al registrar Service Worker:', err));
+    }
+  </script>
+
+</body>
+</html>
+
+
+
+
