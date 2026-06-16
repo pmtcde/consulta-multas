@@ -169,10 +169,11 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <script>
-    // PEGA AQUÍ TU URL DE GOOGLE APPS SCRIPT GENERADA EN EL PASO 2
+    // REEMPLAZA AQUÍ TU ENLACE /EXEC DE GOOGLE APPS SCRIPT
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzomI1MOPYNnQEEr_A2TZ5DH-daBvFcRpslRQb7eMYEzuzYomZdg-O0ETmuhIn7yJKa7g/exec";
 
-    let resultadosActuales = []; // Guarda temporalmente las multas encontradas para exportar PDF
+    let resultadosActuales = []; 
+    const cacheMultas = {}; // Sistema de velocidad Caché Local
 
     function logout() {
       sessionStorage.removeItem("logueado");
@@ -181,6 +182,24 @@
 
     function limpiarTexto(texto) {
       return texto ? texto.replace(/\s+/g, '').toUpperCase() : '';
+    }
+
+    // Corrección visual de la Fecha ISO proveniente del servidor de Google
+    function formatearFechaLegible(fechaRaw) {
+      if (!fechaRaw) return 'N/A';
+      
+      // Si la fecha contiene la "T" característica del formato ISO de Google (ej: 2026-06-14T07:00:00.000Z)
+      if (typeof fechaRaw === 'string' && fechaRaw.includes('T')) {
+        try {
+          const partes = fechaRaw.split('T')[0].split('-'); // Extrae ["2026", "06", "14"]
+          if (partes.length === 3) {
+            return `${partes[2]}/${partes[1]}/${partes[0]}`; // Retorna "14/06/2026"
+          }
+        } catch (e) {
+          console.error("Error al formatear fecha:", e);
+        }
+      }
+      return fechaRaw; // Si ya estaba normal, la deja pasar tal cual
     }
 
     function obtenerUrlImagenDrive(urlDrive) {
@@ -192,7 +211,6 @@
       return '';
     }
 
-    // Solicitud en tiempo real al servidor seguro de Google
     function buscarMatricula() {
       const inputRaw = document.getElementById('matricula').value;
       const input = limpiarTexto(inputRaw);
@@ -206,15 +224,19 @@
         return;
       }
 
-      // Feedback de carga (Evita que el inspector presione muchas veces)
+      // Si ya fue buscada en el turno, mostrar al instante
+      if (cacheMultas[input]) {
+        resultadosActuales = cacheMultas[input];
+        renderizarTarjetas(resultadosActuales, div);
+        return;
+      }
+
       btn.disabled = true;
       btn.innerText = "Buscando...";
 
-      // Consulta directa solo por la matrícula ingresada
       fetch(`${SCRIPT_URL}?matricula=${encodeURIComponent(input)}`)
         .then(response => response.json())
         .then(resultados => {
-          resultadosActuales = resultados; // Almacenar en caché local
           btn.disabled = false;
           btn.innerText = "Buscar";
 
@@ -223,47 +245,10 @@
             return;
           }
 
-          if (resultados.length > 0) {
-            resultados.forEach(r => {
-              const card = document.createElement('div');
-              card.className = 'card';
-              
-              const enlaceRaw = r['EVIDENCIA'] || '';
-              const urlImagen = obtenerUrlImagenDrive(enlaceRaw);
-              
-              let htmlEvidencia = '';
-              if (urlImagen) {
-                htmlEvidencia = `
-                  <div class="evidencia-container">
-                    <div style="margin-bottom: 5px;"><span class="label">Evidencia:</span></div>
-                    <img src="${urlImagen}" class="evidencia-img" alt="Evidencia de Infracción" onerror="this.onerror=null; this.src=''; this.parentElement.innerHTML='<span class=\"label\"';">
-                  </div>
-                `;
-              } else if (enlaceRaw.trim() !== '') {
-                htmlEvidencia = `
-                  <div style="margin-top: 10px;">
-                    <span class="label">Evidencia:</span> <a href="${enlaceRaw}" target="_blank" style="color:var(--azul-claro); font-weight:bold;">Ver adjunto en Drive ↗</a>
-                  </div>
-                `;
-              }
+          cacheMultas[input] = resultados;
+          resultadosActuales = resultados; 
 
-              card.innerHTML = `
-                <div><span class="label">Fecha:</span> ${r.FECHA || 'N/A'}</div>
-                <div><span class="label">Vehículo:</span> ${r.VEHICULO || 'N/A'}</div>
-                <div><span class="label">Matrícula:</span> ${r.MATRICULA || 'N/A'}</div>
-                <div><span class="label">Infracción:</span> ${r.INFRACCION || 'N/A'}</div>
-                <div><span class="label">Boleta N°:</span> ${r['BOLETA DE CONTRAVENCION'] || 'N/A'}</div>
-                <div><span class="label">Comprobante de pago:</span> ${r['COMPROBANTE DE PAGO'] || 'Pendiente'}</div>
-                ${htmlEvidencia}
-                <div style="margin-top: 15px;">
-                  <button class="exportar-btn" onclick="exportarPDFDesdeId(${r._id})">Exportar PDF</button>
-                </div>
-              `;
-              div.appendChild(card);
-            });
-          } else {
-            div.innerHTML = '<p>No se registran multas para esta matrícula.</p>';
-          }
+          renderizarTarjetas(resultados, div);
         })
         .catch(err => {
           btn.disabled = false;
@@ -271,6 +256,53 @@
           div.innerHTML = '<p style="color:red;">Error de conexión. Intente nuevamente.</p>';
           console.error(err);
         });
+    }
+
+    function renderizarTarjetas(resultados, div) {
+      if (resultados.length > 0) {
+        resultados.forEach(r => {
+          const card = document.createElement('div');
+          card.className = 'card';
+          
+          const enlaceRaw = r['EVIDENCIA'] || '';
+          const urlImagen = obtenerUrlImagenDrive(enlaceRaw);
+          
+          // Formateamos la fecha del sistema para que vuelva a ser entendible por las personas
+          const fechaLimpia = formatearFechaLegible(r.FECHA);
+          
+          let htmlEvidencia = '';
+          if (urlImagen) {
+            htmlEvidencia = `
+              <div class="evidencia-container">
+                <div style="margin-bottom: 5px;"><span class="label">Evidencia:</span></div>
+                <img src="${urlImagen}" class="evidencia-img" alt="Evidencia de Infracción" onerror="this.onerror=null; this.src=''; this.parentElement.innerHTML='<span class=\"label\">';">
+              </div>
+            `;
+          } else if (enlaceRaw.trim() !== '') {
+            htmlEvidencia = `
+              <div style="margin-top: 10px;">
+                <span class="label">Evidencia:</span> <a href="${enlaceRaw}" target="_blank" style="color:var(--azul-claro); font-weight:bold;">Ver adjunto en Drive ↗</a>
+              </div>
+            `;
+          }
+
+          card.innerHTML = `
+            <div><span class="label">Fecha:</span> ${fechaLimpia}</div>
+            <div><span class="label">Vehículo:</span> ${r.VEHICULO || 'N/A'}</div>
+            <div><span class="label">Matrícula:</span> ${r.MATRICULA || 'N/A'}</div>
+            <div><span class="label">Infracción:</span> ${r.INFRACCION || 'N/A'}</div>
+            <div><span class="label">Boleta N°:</span> ${r['BOLETA DE CONTRAVENCION'] || 'N/A'}</div>
+            <div><span class="label">Comprobante de pago:</span> ${r['COMPROBANTE DE PAGO'] || 'Pendiente'}</div>
+            ${htmlEvidencia}
+            <div style="margin-top: 15px;">
+              <button class="exportar-btn" onclick="exportarPDFDesdeId(${r._id})">Exportar PDF</button>
+            </div>
+          `;
+          div.appendChild(card);
+        });
+      } else {
+        div.innerHTML = '<p>No se registran multas para esta matrícula.</p>';
+      }
     }
 
     function exportarPDFDesdeId(id) {
@@ -300,8 +332,11 @@
       const salto = 8;
       doc.setFontSize(10);
 
+      // Usamos también el formateador aquí para que el PDF salga correcto
+      const fechaPdf = formatearFechaLegible(multa.FECHA);
+
       const campos = [
-        { label: "Fecha:", valor: multa.FECHA },
+        { label: "Fecha:", valor: fechaPdf },
         { label: "Vehículo:", valor: multa.VEHICULO },
         { label: "Matrícula:", valor: multa.MATRICULA },
         { label: "Infracción:", valor: multa.INFRACCION, multiline: true },
