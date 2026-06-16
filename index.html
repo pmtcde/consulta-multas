@@ -77,6 +77,8 @@
       border: none; cursor: pointer; transition: background-color 0.3s ease;
     }
     .buscar-btn:hover { background-color: var(--azul); }
+    .buscar-btn:disabled { background-color: #778da9; cursor: not-allowed; }
+    
     #resultado { margin-top: 25px; width: 100%; max-width: 600px; }
     
     .card {
@@ -152,7 +154,7 @@
     <h1>Consultar multa</h1>
     <div class="input-container">
       <input type="text" id="matricula" placeholder="Ingrese matrícula (Ej: PMT123)">
-      <button class="buscar-btn" onclick="buscarMatricula()">Buscar</button>
+      <button class="buscar-btn" id="btnBuscar" onclick="buscarMatricula()">Buscar</button>
     </div>
     <div id="resultado"></div>
   </main>
@@ -164,54 +166,39 @@
     </a>
   </footer>
 
-  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.2/papaparse.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <script>
-    let multas = [];
+    // PEGA AQUÍ TU URL DE GOOGLE APPS SCRIPT GENERADA EN EL PASO 2
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzomI1MOPYNnQEEr_A2TZ5DH-daBvFcRpslRQb7eMYEzuzYomZdg-O0ETmuhIn7yJKa7g/exec";
+
+    let resultadosActuales = []; // Guarda temporalmente las multas encontradas para exportar PDF
 
     function logout() {
       sessionStorage.removeItem("logueado");
       window.location.href = "login.html";
     }
 
-    // Extracción dinámica de Google Sheets
-    Papa.parse('https://docs.google.com/spreadsheets/d/e/2PACX-1vR1MbRNwg_amqEoZBUn_KT1kuflI2HjY4juQOnLe4X48Hh7LiFUnXmChwO1DEzS0HQ084ZkNcmFudf4/pub?output=csv', {
-      download: true,
-      header: true,
-      complete: function(results) {
-        multas = results.data.map((row, index) => {
-          let nuevaFila = { _id: index }; 
-          for (let clave in row) {
-            // El trim() limpia los espacios fantasmas en las cabeceras (ej: columna J "EVIDENCIA")
-            nuevaFila[clave.trim().toUpperCase()] = row[clave];
-          }
-          return nuevaFila;
-        }).filter(row => row.MATRICULA);
-      }
-    });
-
     function limpiarTexto(texto) {
       return texto ? texto.replace(/\s+/g, '').toUpperCase() : '';
     }
 
-    // Conversión de URL compartida de Drive a enlace de imagen real (Usa Endpoint de Miniatura)
     function obtenerUrlImagenDrive(urlDrive) {
       if (!urlDrive) return '';
-      // Expresión regular universal para extraer IDs válidos de archivos de Drive
       const match = urlDrive.match(/(?:id=|对外\/d\/|\/d\/|^)([a-zA-Z0-9-_]{25,})/);
-      
       if (match && match[1]) {
-        // sz=s4000 le pide a Google que sirva la imagen en la mejor resolución posible
         return `https://drive.google.com/thumbnail?id=${match[1]}&sz=s4000`;
       }
       return '';
     }
 
+    // Solicitud en tiempo real al servidor seguro de Google
     function buscarMatricula() {
       const inputRaw = document.getElementById('matricula').value;
       const input = limpiarTexto(inputRaw);
       const div = document.getElementById('resultado');
+      const btn = document.getElementById('btnBuscar');
+      
       div.innerHTML = '';
 
       if (!input) {
@@ -219,54 +206,75 @@
         return;
       }
 
-      const resultados = multas.filter(row => limpiarTexto(row.MATRICULA) === input);
+      // Feedback de carga (Evita que el inspector presione muchas veces)
+      btn.disabled = true;
+      btn.innerText = "Buscando...";
 
-      if (resultados.length > 0) {
-        resultados.forEach(r => {
-          const card = document.createElement('div');
-          card.className = 'card';
-          
-          const enlaceRaw = r['EVIDENCIA'] || '';
-          const urlImagen = obtenerUrlImagenDrive(enlaceRaw);
-          
-          let htmlEvidencia = '';
-          if (urlImagen) {
-            htmlEvidencia = `
-              <div class="evidencia-container">
-                <div style="margin-bottom: 5px;"><span class="label">Evidencia:</span></div>
-                <img src="${urlImagen}" class="evidencia-img" alt="Evidencia de Infracción" onerror="this.onerror=null; this.src=''; this.parentElement.innerHTML=';">
-              </div>
-            `;
-          } else if (enlaceRaw.trim() !== '') {
-            // En caso de que haya texto o enlace mal estructurado en la columna J, genera un link de escape
-            htmlEvidencia = `
-              <div style="margin-top: 10px;">
-                <span class="label">Evidencia:</span> <a href="${enlaceRaw}" target="_blank" style="color:var(--azul-claro); font-weight:bold;">Ver adjunto en Drive ↗</a>
-              </div>
-            `;
+      // Consulta directa solo por la matrícula ingresada
+      fetch(`${SCRIPT_URL}?matricula=${encodeURIComponent(input)}`)
+        .then(response => response.json())
+        .then(resultados => {
+          resultadosActuales = resultados; // Almacenar en caché local
+          btn.disabled = false;
+          btn.innerText = "Buscar";
+
+          if (resultados.error) {
+            div.innerHTML = `<p style="color:red;">Error del sistema: ${resultados.error}</p>`;
+            return;
           }
 
-          card.innerHTML = `
-            <div><span class="label">Fecha:</span> ${r.FECHA || 'N/A'}</div>
-            <div><span class="label">Vehículo:</span> ${r.VEHICULO || 'N/A'}</div>
-            <div><span class="label">Matrícula:</span> ${r.MATRICULA || 'N/A'}</div>
-            <div><span class="label">Infracción:</span> ${r.INFRACCION || 'N/A'}</div>
-            <div><span class="label">Boleta N°:</span> ${r['BOLETA DE CONTRAVENCION'] || 'N/A'}</div>
-            <div><span class="label">Comprobante de pago:</span> ${r['COMPROBANTE DE PAGO'] || 'Pendiente'}</div>
-            ${htmlEvidencia}
-            <div style="margin-top: 15px;">
-              <button class="exportar-btn" onclick="exportarPDFDesdeId(${r._id})">Exportar PDF</button>
-            </div>
-          `;
-          div.appendChild(card);
+          if (resultados.length > 0) {
+            resultados.forEach(r => {
+              const card = document.createElement('div');
+              card.className = 'card';
+              
+              const enlaceRaw = r['EVIDENCIA'] || '';
+              const urlImagen = obtenerUrlImagenDrive(enlaceRaw);
+              
+              let htmlEvidencia = '';
+              if (urlImagen) {
+                htmlEvidencia = `
+                  <div class="evidencia-container">
+                    <div style="margin-bottom: 5px;"><span class="label">Evidencia fotográfica:</span></div>
+                    <img src="${urlImagen}" class="evidencia-img" alt="Evidencia de Infracción" onerror="this.onerror=null; this.src=''; this.parentElement.innerHTML='<span class=\"label\">Evidencia:</span> Archivo privado o no accesible';">
+                  </div>
+                `;
+              } else if (enlaceRaw.trim() !== '') {
+                htmlEvidencia = `
+                  <div style="margin-top: 10px;">
+                    <span class="label">Evidencia:</span> <a href="${enlaceRaw}" target="_blank" style="color:var(--azul-claro); font-weight:bold;">Ver adjunto en Drive ↗</a>
+                  </div>
+                `;
+              }
+
+              card.innerHTML = `
+                <div><span class="label">Fecha:</span> ${r.FECHA || 'N/A'}</div>
+                <div><span class="label">Vehículo:</span> ${r.VEHICULO || 'N/A'}</div>
+                <div><span class="label">Matrícula:</span> ${r.MATRICULA || 'N/A'}</div>
+                <div><span class="label">Infracción:</span> ${r.INFRACCION || 'N/A'}</div>
+                <div><span class="label">Boleta N°:</span> ${r['BOLETA DE CONTRAVENCION'] || 'N/A'}</div>
+                <div><span class="label">Comprobante de pago:</span> ${r['COMPROBANTE DE PAGO'] || 'Pendiente'}</div>
+                ${htmlEvidencia}
+                <div style="margin-top: 15px;">
+                  <button class="exportar-btn" onclick="exportarPDFDesdeId(${r._id})">Exportar PDF</button>
+                </div>
+              `;
+              div.appendChild(card);
+            });
+          } else {
+            div.innerHTML = '<p>No se registran multas para esta matrícula.</p>';
+          }
+        })
+        .catch(err => {
+          btn.disabled = false;
+          btn.innerText = "Buscar";
+          div.innerHTML = '<p style="color:red;">Error de conexión. Intente nuevamente.</p>';
+          console.error(err);
         });
-      } else {
-        div.innerHTML = '<p>No se registran multas para esta matrícula.</p>';
-      }
     }
 
     function exportarPDFDesdeId(id) {
-      const multa = multas.find(m => m._id === id);
+      const multa = resultadosActuales.find(m => m._id === id);
       if (multa) {
         exportarPDF(multa);
       }
@@ -282,7 +290,6 @@
 
       doc.setFontSize(14);
       doc.text("Policía Municipal de Tránsito - CDE", 15, 20);
-
       doc.setFontSize(12);
       doc.text("Comprobante de Infracción", 15, 30);
 
